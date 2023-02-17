@@ -13,8 +13,8 @@ typedef struct machine{
     material in2;
 }machine;
 
-machine *loadmachines(){
-FILE *fp = fopen("machines.dat", "rb");
+void loadmachines(){
+    FILE *fp = fopen("machines.dat", "rb");
     if(!fp)
     {
         printf("Error: can't open file to read\n");
@@ -25,8 +25,6 @@ FILE *fp = fopen("machines.dat", "rb");
         fclose(fp); 
         fp = fopen("machines.dat", "rb");
     }
-
-    printf("hey\n");
     int maximum = 0;
     fread(&maximum, sizeof(int), 1, fp);
     printf("maximum = %d\n", maximum);
@@ -34,14 +32,35 @@ FILE *fp = fopen("machines.dat", "rb");
 
     for(int i = 0; i < maximum; ++i){
         fread(&machines[i], sizeof(machine), 1, fp); 
-        printf("machine name: %s\tmaterial output: %s, %d\tmaterial intput: %s, %d %s, %d\n", machines[i].name, machines[i].out.name, machines[i].out.amount, machines[i].in1.name, machines[i].in1.amount, machines[i].in2.name, machines[i].in2.amount);
+        printf("machine name: %s\tmaterial output: %s, %d\tmaterial intput: %s, %d %s, %d\n", 
+                machines[i].name, machines[i].out.name, machines[i].out.amount, machines[i].in1.name, 
+                machines[i].in1.amount, machines[i].in2.name, machines[i].in2.amount);
     }
     fclose(fp); 
-    return machines;
+    free(machines);
+    return;
 };
 
 void readmachines(){
-    // TODO : make function to read machines in struct array
+    FILE *fp = fopen("machines.dat", "rb");
+    if(!fp)
+    {
+        printf("Error: can't open file to read\n");
+        return;
+    }
+    int maximum = 0;
+    fread(&maximum, sizeof(int), 1, fp);
+    printf("maximum = %d\n", maximum);
+    machine *machines = malloc(maximum * sizeof(machine));
+    for(int i = 0; i < maximum; ++i){
+        fread(&machines[i], sizeof(machine), 1, fp); 
+        printf("machine name: %s\tmaterial output: %s, %d\tmaterial intput: %s, %d %s, %d\n", 
+                machines[i].name, machines[i].out.name, machines[i].out.amount, machines[i].in1.name, 
+                machines[i].in1.amount, machines[i].in2.name, machines[i].in2.amount);
+    }
+    fclose(fp); 
+    free(machines);
+    return;
 };
 
 void addmachines(){
