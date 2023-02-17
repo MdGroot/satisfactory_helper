@@ -13,7 +13,7 @@ typedef struct machine{
     material in2;
 }machine;
 
-void loadmachines(){
+void makemachinefile(){
     FILE *fp = fopen("machines.dat", "rb");
     if(!fp)
     {
@@ -77,7 +77,7 @@ void makecalculation(){
 
 int main(int arc, char* argv[])
 {
-    machine *machines = loadmachines();
+    makemachinefile();
     int choice;
 
     printf("1. Read Machines\n");
@@ -108,7 +108,6 @@ int main(int arc, char* argv[])
             printf("menu fout\n");
             break;
     }
-    free(machines);
     return 0;
 }
 
