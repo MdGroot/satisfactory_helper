@@ -1,47 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct material{
+typedef struct Material{
     char name [20];
     int amount;
-}material;
+}Material;
 
-typedef struct machine{
+typedef struct Machine{
     char name [40];
-    material out;
-    material in1;
-    material in2;
-}machine;
+    Material out;
+    Material in1;
+    Material in2;
+}Machine;
 
-void makemachinefile(){
+void makeMachinefile(){
     FILE *fp = fopen("machines.dat", "rb");
-    if(!fp)
-    {
-        printf("Error: can't open file to read\n");
-        fp = fopen("machines.dat", "wb");
-        int begin = 0;
-        fwrite(&begin, sizeof(int), 1, fp);
-        printf("Made new file\n");
-        fclose(fp); 
-        fp = fopen("machines.dat", "rb");
+    if(fp){
+        fclose(fp);
+        return;
     }
-    int maximum = 0;
-    fread(&maximum, sizeof(int), 1, fp);
-    printf("maximum = %d\n", maximum);
-    machine *machines = malloc(maximum * sizeof(machine));
-
-    for(int i = 0; i < maximum; ++i){
-        fread(&machines[i], sizeof(machine), 1, fp); 
-        printf("machine name: %s\tmaterial output: %s, %d\tmaterial intput: %s, %d %s, %d\n", 
-                machines[i].name, machines[i].out.name, machines[i].out.amount, machines[i].in1.name, 
-                machines[i].in1.amount, machines[i].in2.name, machines[i].in2.amount);
-    }
+    
+    printf("Error: can't open file to read\n");
+    fp = fopen("machines.dat", "wb");
+    int begin = 0;
+    fwrite(&begin, sizeof(&begin), 1, fp);
+    printf("Made new file\n");
     fclose(fp); 
-    free(machines);
     return;
 };
 
-void readmachines(){
+void readMachines(){
     FILE *fp = fopen("machines.dat", "rb");
     if(!fp)
     {
@@ -49,11 +37,11 @@ void readmachines(){
         return;
     }
     int maximum = 0;
-    fread(&maximum, sizeof(int), 1, fp);
+    fread(&maximum, sizeof(&maximum), 1, fp);
     printf("maximum = %d\n", maximum);
-    machine *machines = malloc(maximum * sizeof(machine));
-    for(int i = 0; i < maximum; ++i){
-        fread(&machines[i], sizeof(machine), 1, fp); 
+    Machine *machines = malloc(maximum * sizeof(&machines));
+    for(int i = 0; i <= maximum; ++i){
+        fread(&machines[i], sizeof(&machines[i]), 1, fp); 
         printf("machine name: %s\tmaterial output: %s, %d\tmaterial intput: %s, %d %s, %d\n", 
                 machines[i].name, machines[i].out.name, machines[i].out.amount, machines[i].in1.name, 
                 machines[i].in1.amount, machines[i].in2.name, machines[i].in2.amount);
@@ -77,7 +65,8 @@ void makecalculation(){
 
 int main(int arc, char* argv[])
 {
-    makemachinefile();
+    makeMachinefile();
+    readMachines();
     int choice;
 
     printf("1. Read Machines\n");
@@ -93,7 +82,7 @@ int main(int arc, char* argv[])
     switch (choice)
     {
         case 1:
-            readmachines();
+            readMachines();
             break;
         case 2:
             addmachines();
@@ -105,7 +94,7 @@ int main(int arc, char* argv[])
             makecalculation();
             break;
         default:
-            printf("menu fout\n");
+            printf("menu error\n");
             break;
     }
     return 0;
