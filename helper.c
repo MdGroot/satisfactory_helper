@@ -38,7 +38,7 @@ void readMachines(){
     int maximum = 0;
     fread(&maximum, sizeof(maximum), 1, fp);
     printf("maximum = %d\n", maximum);
-    Machine *machines[maximum] = malloc(maximum * sizeof(* machines));
+    Machine *machines = malloc(maximum * sizeof(Machine));
     for(int i = 0; i < maximum; ++i){
         fread(&machines[i], sizeof(Machine), 1, fp); 
         printf("machine name: %s\tmaterial output: %s, %d\tmaterial intput: %s, %d %s, %d\n", 
