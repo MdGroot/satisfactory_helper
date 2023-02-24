@@ -14,13 +14,13 @@ typedef struct Machine{
 }Machine;
 
 void makeMachinefile(){
-    FILE *fp = fopen("machines.dat", "rb");
+    FILE *fp = fopen("machines.dat", "r");
     if(fp){
         fclose(fp);
         return;
     }
     printf("can't open file to read\n");
-    fp = fopen("machines.dat", "wb");
+    fp = fopen("machines.dat", "w");
     int begin = 0;
     fwrite(&begin, sizeof(begin), 1, fp);
     printf("Made new file\n");
@@ -29,7 +29,7 @@ void makeMachinefile(){
 };
 
 void readMachines(){
-    FILE *fp = fopen("machines.dat", "rb");
+    FILE *fp = fopen("machines.dat", "r");
     if(!fp)
     {
         printf("Error: can't open file to read\n");
@@ -42,7 +42,8 @@ void readMachines(){
     for(int i = 0; i < maximum; ++i){
         fread(&machines[i], sizeof(Machine), 1, fp); 
         printf("Machine name: %s\nMaterial output: %s, %d\nMaterial 1 intput: %s, %d\nMaterial 2 intput: %s, %d\n", 
-                machines[i].name, machines[i].out.name, machines[i].out.amount, machines[i].in1.name, 
+                machines[i].name, 
+                machines[i].out.name, machines[i].out.amount, machines[i].in1.name, 
                 machines[i].in1.amount, machines[i].in2.name, machines[i].in2.amount);
     }
     fclose(fp); 
@@ -53,7 +54,7 @@ void readMachines(){
 void addMachines(){
     // FIX : make funciton to add machine to machines array and file
     char proceed = ('n');
-    FILE *fp = fopen("machines.dat", "ab");
+    FILE *fp = fopen("machines.dat", "a");
     if(!fp)
     {
         printf("Error: can't open file to read\n");
@@ -87,12 +88,12 @@ void addMachines(){
     }
     fwrite(&newmachine, sizeof(Machine), 1, fp);
     fclose(fp); 
-    fp = fopen("machines.dat", "rb");
+    fp = fopen("machines.dat", "r");
     int amount = 0;
     fread(&amount, sizeof(amount), 1, fp);
     printf("amount = %d\n", amount);
     fclose(fp);
-    fp = fopen("machines.dat", "wb");
+    fp = fopen("machines.dat", "w");
     ++amount;
     fwrite(&amount, sizeof(amount), 1, fp);
     printf("Wrote new amount\n");
