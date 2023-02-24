@@ -22,7 +22,7 @@ void makeMachinefile(){
     printf("can't open file to read\n");
     fp = fopen("machines.dat", "wb");
     int begin = 0;
-    fwrite(&begin, sizeof(&begin), 1, fp);
+    fwrite(&begin, sizeof(begin), 1, fp);
     printf("Made new file\n");
     fclose(fp); 
     return;
@@ -36,11 +36,11 @@ void readMachines(){
         return;
     }
     int maximum = 0;
-    fread(&maximum, sizeof(&maximum), 1, fp);
+    fread(&maximum, sizeof(maximum), 1, fp);
     printf("maximum = %d\n", maximum);
-    Machine *machines = malloc(maximum * sizeof(&machines));
-    for(int i = 0; i <= maximum; ++i){
-        fread(&machines[i], sizeof(machines[i]), 1, fp); 
+    Machine *machines[maximum] = malloc(maximum * sizeof(* machines));
+    for(int i = 0; i < maximum; ++i){
+        fread(&machines[i], sizeof(Machine), 1, fp); 
         printf("machine name: %s\tmaterial output: %s, %d\tmaterial intput: %s, %d %s, %d\n", 
                 machines[i].name, machines[i].out.name, machines[i].out.amount, machines[i].in1.name, 
                 machines[i].in1.amount, machines[i].in2.name, machines[i].in2.amount);
@@ -72,6 +72,7 @@ int main(int arc, char** argv)
         printf("2. Add Machines\n");
         printf("3. Remove Machines\n");
         printf("4. Make Calculation\n");
+        printf("9. quit\n");
         printf("Enter your choice: ");
     
         scanf("%1d", &choice);
@@ -90,8 +91,11 @@ int main(int arc, char** argv)
             case 4:
                 makeCalculation();
                 break;
+            case 9:
+                return 0;
+                break;
             default:
-                printf("menu error\n");
+                printf("invalid\n");
                 break;
         }
     }
