@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 typedef struct Material{
     char name [20];
-    int amount;
+    uint16_t amount;
 }Material;
 
 typedef struct Machine{
@@ -14,14 +15,14 @@ typedef struct Machine{
 }Machine;
 
 void makeMachinefile(){
-    FILE *fp = fopen("machines.dat", "r");
+    FILE *fp = fopen("machines.dat", "rb");
     if(fp){
         fclose(fp);
         return;
     }
     printf("can't open file to read\n");
-    fp = fopen("machines.dat", "w");
-    int begin = 0;
+    fp = fopen("machines.dat", "wb");
+    uint8_t begin = 1;
     fwrite(&begin, sizeof(begin), 1, fp);
     printf("Made new file\n");
     fclose(fp); 
@@ -29,13 +30,13 @@ void makeMachinefile(){
 };
 
 void readMachines(){
-    FILE *fp = fopen("machines.dat", "r");
+    FILE *fp = fopen("machines.dat", "rb");
     if(!fp)
     {
         printf("Error: can't open file to read\n");
         return;
     }
-    int maximum = 0;
+    uint8_t maximum = 0;
     fread(&maximum, sizeof(maximum), 1, fp);
     printf("maximum = %d\n", maximum);
     Machine *machines = (Machine *) malloc(maximum * sizeof(* machines));
@@ -54,7 +55,7 @@ void readMachines(){
 void addMachines(){
     // FIX : make funciton to add machine to machines array and file
     char proceed = ('n');
-    FILE *fp = fopen("machines.dat", "a");
+    FILE *fp = fopen("machines.dat", "ab");
     if(!fp)
     {
         printf("Error: can't open file to read\n");
@@ -86,17 +87,17 @@ void addMachines(){
         printf("Proceed(y/n)?\n");
         scanf(" %c", &proceed);
     }
-    fwrite(&newmachine, sizeof(Machine), 1, fp);
+    fwrite(newmachine, sizeof(Machine), 1, fp);
     fclose(fp); 
-    fp = fopen("machines.dat", "r");
-    int amount = 0;
+    fp = fopen("machines.dat", "rb");
+    uint8_t amount = 0;
     fread(&amount, sizeof(amount), 1, fp);
     printf("amount = %d\n", amount);
     fclose(fp);
-    fp = fopen("machines.dat", "w");
+    fp = fopen("machines.dat", "wb");
     ++amount;
     fwrite(&amount, sizeof(amount), 1, fp);
-    printf("Wrote new amount\n");
+    printf("wrote new amount\n");
     fclose(fp); 
     free(newmachine);
     return;
