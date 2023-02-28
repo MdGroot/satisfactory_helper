@@ -1,10 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 
 typedef struct Material{
     char name [20];
-    uint16_t amount;
+    int amount;
 }Material;
 
 typedef struct Machine{
@@ -22,7 +21,7 @@ void makeMachinefile(){
     }
     printf("can't open file to read\n");
     fp = fopen("machines.dat", "wb");
-    uint8_t begin = 1;
+    int begin = 0;
     fwrite(&begin, sizeof(begin), 1, fp);
     printf("Made new file\n");
     fclose(fp); 
@@ -36,7 +35,7 @@ void readMachines(){
         printf("Error: can't open file to read\n");
         return;
     }
-    uint8_t maximum = 0;
+    int maximum = 0;
     fread(&maximum, sizeof(maximum), 1, fp);
     printf("maximum = %d\n", maximum);
     Machine *machines = (Machine *) malloc(maximum * sizeof(* machines));
@@ -90,7 +89,7 @@ void addMachines(){
     fwrite(newmachine, sizeof(Machine), 1, fp);
     fclose(fp); 
     fp = fopen("machines.dat", "rb");
-    uint8_t amount = 0;
+    int amount = 0;
     fread(&amount, sizeof(amount), 1, fp);
     printf("amount = %d\n", amount);
     fclose(fp);
