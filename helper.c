@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "funct.h"
 
 typedef struct Material{
     char name [20];
@@ -23,7 +24,8 @@ void makeMachinefile(){
     fp = fopen("machines.dat", "wb");
     int begin = 0;
     fwrite(&begin, sizeof(int), 1, fp);
-    printf("Made new file\n");
+    printf("Made new file\n\n");
+    getchar();
     fclose(fp); 
     return;
 };
@@ -147,6 +149,7 @@ int main(int arc, char** argv)
                 printf("invalid\n");
                 break;
         }
+        clear();
     }
     return 0;
 }
