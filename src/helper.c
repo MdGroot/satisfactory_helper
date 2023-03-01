@@ -2,18 +2,6 @@
 #include <stdlib.h>
 #include "funct.h"
 
-typedef struct Material{
-    char name [20];
-    int amount;
-}Material;
-
-typedef struct Machine{
-    char name [40];
-    Material out;
-    Material in1;
-    Material in2;
-}Machine;
-
 void makeMachinefile(){
     FILE *fp = fopen("machines.dat", "rb");
     if(fp){
@@ -42,16 +30,12 @@ void readMachines(){
     }
     int maximum = 0;
     fread(&maximum, sizeof(int), 1, fp);
-    Machine *machines = (Machine *) malloc(maximum * sizeof(* machines));
+    Machine *machine;
     for(int i = 0; i < maximum; ++i){
-        fread(&machines[i], sizeof(Machine), 1, fp); 
-        printf("Machine name:      %s\nMaterial output:   %s, %d\nMaterial 1 intput: %s, %d\nMaterial 2 intput: %s, %d\n\n", 
-                machines[i].name, 
-                machines[i].out.name, machines[i].out.amount, machines[i].in1.name, 
-                machines[i].in1.amount, machines[i].in2.name, machines[i].in2.amount);
+        machine = machineRead(fp); 
+        machinePrint(machine);
     }
     fclose(fp);
-    free(machines);
     getchar();
     getchar();
     return;
@@ -67,35 +51,39 @@ void addMachines(){
         clear();
         return;
     }
-    Machine *newmachine = (Machine *) malloc(sizeof(* newmachine));
+    Machine *machine;
+    char *new_name;
+    char *new_out_name;
+    char *new_in1_name;
+    char *new_in2_name;
+    int new_out_amount;
+    int new_in1_amount;
+    int new_in2_amount;
     while(proceed == ('n')) {
         clear();
         printf("New machine name: ");
-        scanf(" %[^\n]", newmachine->name);
+        scanf(" %39[^\n]", new_name);
         printf("Material out name: ");
-        scanf(" %[^\n]", newmachine->out.name);
+        scanf(" %39[^\n]", new_out_name);
         printf("Material out amount: ");
-        scanf(" %d", &newmachine->out.amount);
+        scanf(" %d", &new_out_amount);
         printf("Material in1 name: ");
-        scanf(" %[^\n]", newmachine->in1.name);
+        scanf(" %39[^\n]", new_in1_name);
         printf("Material in1 amount: ");
-        scanf(" %d", &newmachine->in1.amount);
+        scanf(" %d", &new_in1_amount);
         printf("Material in2 name: ");
-        scanf(" %[^\n]", newmachine->in2.name);
+        scanf(" %39[^\n]", new_in2_name);
         printf("Material in2 amount: ");
-        scanf(" %d", &newmachine->in2.amount);
+        scanf(" %d", &new_in2_amount);
+        machine = machineCreate(new_name, new_out_name, new_out_amount, new_in1_name, new_in1_amount, new_in2_name, new_in2_amount);
         clear();
-        printf("Machine name: %s\n", newmachine->name);
-        printf("Material out name: %s\n", newmachine->out.name);
-        printf("Material out amount: %d\n", newmachine->out.amount);
-        printf("Material in1 name: %s\n", newmachine->in1.name);
-        printf("Material in1 amount: %d\n", newmachine->in1.amount);
-        printf("Material in2 name: %s\n", newmachine->in2.name);
-        printf("Material in2 amount: %d\n\n", newmachine->in2.amount);
+        machinePrint(machine);
         printf("Proceed(y/n)?\n");
         scanf(" %c", &proceed);
+        clear();
     }
-    fwrite(newmachine, sizeof(Machine), 1, fp);
+
+    machineWrite(fp, machine);
     fclose(fp); 
 
     fp = fopen("machines.dat", "rb+");
@@ -105,7 +93,6 @@ void addMachines(){
     rewind(fp);
     fwrite(&amount, sizeof(int), 1, fp);
     fclose(fp); 
-    free(newmachine);
     return;
 };
 

@@ -1,21 +1,22 @@
 CC=gcc
 CFLAGS=-Wall -Wextra
+SRC=src
+BINDIR=bin
+OBJ=obj
+SRCS=$(wildcard $(SRC)/*.c)
+OBJS=$(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SRCS))
+BIN=$(BINDIR)/run
 
-all: helper
+all: $(BIN)
 
-helper: helper.o funct.o
-	@$(CC) $(CFLAGS) helper.o funct.o -o helper
+$(BIN): $(OBJS)
+	@$(CC) $(CFLAGS) $^ -o $@
 
-helper.o: helper.c
-	@$(CC) $(CFLAGS) helper.c -c
-
-funct.o: funct.c funct.h
-	@$(CC) $(CFLAGS) funct.c -c
-
-rm: clean fresh
+$(OBJ)/%.o: $(SRC)/%.c
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@rm helper helper.o funct.o
+	@rm -r $(BIN) $(OBJ)/*
 
-fresh:
-	@rm machines.dat
+rm:
+	@rm -r $(BINDIR)/* $(OBJ)/*
