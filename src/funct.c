@@ -60,6 +60,12 @@ void machineWrite(FILE *fp, Machine *machine){
     fwrite(machine, sizeof(Machine), 1, fp);
 }
 
+int machineCompare(Machine *machine, char *name){
+    int equal = strcmp(machine->name, name);
+    equal ? printf("hit\n") : printf("no hit\n");
+    return equal;
+}
+
 int fpCheck(FILE *fp){
     if(!fp)
     {
@@ -72,10 +78,40 @@ int fpCheck(FILE *fp){
 }
 
 FILE *fpSetback(FILE *fp){
-    int i = 0;
-    i = fseek(fp, (long)sizeof(Machine), SEEK_CUR);
+    int i;
+    i = fseek(fp, (long)-sizeof(Machine), SEEK_CUR);
     if(i!=0){
         printf("ERROR IN SETBACK\n");
     }
     return fp;
+}
+
+FILE *fpSetforward(FILE *fp){
+    int i;
+    i = fseek(fp, (long)sizeof(Machine), SEEK_CUR);
+    if(i!=0){
+        printf("ERROR IN SETFORWARD\n");
+    }
+    return fp;
+}
+
+FILE *fpMove(FILE *fp, FILE *fpw){
+    fp = fpSetback(fp);
+    long curr = ftell(fp);
+    int i;
+    i = fseek(fpw, curr, SEEK_SET);
+    fp = fpSetforward(fp);
+    if(i!=0){
+        printf("ERROR IN SET\n");
+    }
+    return fpw;
+}
+
+void fpMoveToEnd(FILE *fp, int amount){
+    int i;
+    i = fseek(fp, (long)(amount * sizeof(Machine)), SEEK_CUR);
+    if(i!=0){
+        printf("ERROR IN MOVE\n");
+    }
+    return;
 }

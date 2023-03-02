@@ -22,7 +22,16 @@ Machine *machineRead(FILE *fp, Machine *machine);
 
 void machineWrite(FILE *fp, Machine *machine);
 
+int machineCompare(Machine *machine, char *name);
+
 int fpCheck(FILE *fp);
 
 FILE *fpSetback(FILE *fp);
+
+FILE *fpSetforward(FILE *fp);
+
+FILE *fpMove(FILE *fp, FILE *fpw);
+
+void fpMoveToEnd(FILE *fp, int amount);
+
 #endif

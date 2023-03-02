@@ -37,10 +37,13 @@ void readMachines(){
 
 void addMachines(){
     char proceed = ('n');
-    FILE *fp = fopen("machines.dat", "ab");
+    FILE *fp = fopen("machines.dat", "rb+");
     if(fpCheck(fp) == 0){
         return;
     }
+    int counter = 0;
+    fread(&counter, sizeof(int), 1, fp);
+    fpMoveToEnd(fp, counter);
     Machine *machine = machineInit();
     char new_name[40];
     char new_out_name[40];
@@ -93,17 +96,37 @@ void removeMachines(){
     printf("Enter name of machine to be removed: ");
     scanf(" %39[^\n]", name);
     FILE *fp = fopen("machines.dat", "rb");
+    FILE *fpw = fopen("machines.dat", "rb+");
     if(fpCheck(fp) == 0){
+        return;
+    }
+    if(fpCheck(fpw) == 0){
         return;
     }
     int maximum = 0;
     fread(&maximum, sizeof(int), 1, fp);
     Machine *machine = machineInit();
+    int equal = 1;
+    int found = 0;
     for(int i = 0; i < maximum; ++i){
         machine = machineRead(fp, machine); 
+        if(found > 0){
+            machineWrite(fpw, machine);
+        }
+        equal = machineCompare(machine, name);
+        if(equal == 0){
+            fpw = fpMove(fp, fpw);
+            ++found;
+        }
     }
-    machineDestroy(machine);
+    maximum -= found;
     fclose(fp);
+    FILE *fpi = fopen("machines.dat", "rb+");
+    rewind(fpi);
+    fwrite(&maximum, sizeof(int), 1, fpi);
+    fclose(fpi); 
+    machineDestroy(machine);
+    fclose(fpw);
 };
 
 void makeCalculation(){
