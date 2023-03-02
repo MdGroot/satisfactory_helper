@@ -22,4 +22,7 @@ Machine *machineRead(FILE *fp, Machine *machine);
 
 void machineWrite(FILE *fp, Machine *machine);
 
+int fpCheck(FILE *fp);
+
+FILE *fpSetback(FILE *fp);
 #endif

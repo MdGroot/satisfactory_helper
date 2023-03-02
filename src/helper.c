@@ -20,11 +20,7 @@ void makeMachinefile(){
 
 void readMachines(){
     FILE *fp = fopen("machines.dat", "rb");
-    if(!fp)
-    {
-        printf("Error: can't open file to read\n");
-        getchar();
-        clear();
+    if(fpCheck(fp) == 0){
         return;
     }
     int maximum = 0;
@@ -36,19 +32,13 @@ void readMachines(){
     }
     machineDestroy(machine);
     fclose(fp);
-    getchar();
-    getchar();
     return;
 };
 
 void addMachines(){
     char proceed = ('n');
     FILE *fp = fopen("machines.dat", "ab");
-    if(!fp)
-    {
-        printf("Error: can't open file to read\n");
-        getchar();
-        clear();
+    if(fpCheck(fp) == 0){
         return;
     }
     Machine *machine = machineInit();
@@ -97,7 +87,23 @@ void addMachines(){
 };
 
 void removeMachines(){
-    // TODO : make function to remove machine from machines array and file
+    // TODO : make function to remove machine from file
+    readMachines();
+    char name[40];
+    printf("Enter name of machine to be removed: ");
+    scanf(" %39[^\n]", name);
+    FILE *fp = fopen("machines.dat", "rb");
+    if(fpCheck(fp) == 0){
+        return;
+    }
+    int maximum = 0;
+    fread(&maximum, sizeof(int), 1, fp);
+    Machine *machine = machineInit();
+    for(int i = 0; i < maximum; ++i){
+        machine = machineRead(fp, machine); 
+    }
+    machineDestroy(machine);
+    fclose(fp);
 };
 
 void makeCalculation(){
@@ -124,6 +130,8 @@ int main(){//int arc, char** argv){
         {
             case 1:
                 readMachines();
+                getchar();
+                getchar();
                 break;
             case 2:
                 addMachines();

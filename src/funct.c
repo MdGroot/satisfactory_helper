@@ -59,3 +59,23 @@ Machine *machineRead(FILE *fp, Machine *machine){
 void machineWrite(FILE *fp, Machine *machine){
     fwrite(machine, sizeof(Machine), 1, fp);
 }
+
+int fpCheck(FILE *fp){
+    if(!fp)
+    {
+        printf("Error: can't open file to read\n");
+        getchar();
+        clear();
+        return 0;
+    }
+    return 1;
+}
+
+FILE *fpSetback(FILE *fp){
+    int i = 0;
+    i = fseek(fp, (long)sizeof(Machine), SEEK_CUR);
+    if(i!=0){
+        printf("ERROR IN SETBACK\n");
+    }
+    return fp;
+}
