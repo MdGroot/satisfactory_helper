@@ -9,6 +9,9 @@ BIN=$(BINDIR)/run
 
 all: $(BIN)
 
+debug: CFLAGS=-Wall -Wextra -g
+debug: $(BIN)
+
 $(BIN): $(OBJS)
 	@$(CC) $(CFLAGS) $^ -o $@
 

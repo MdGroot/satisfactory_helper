@@ -30,11 +30,12 @@ void readMachines(){
     }
     int maximum = 0;
     fread(&maximum, sizeof(int), 1, fp);
-    Machine *machine;
+    Machine *machine = machineInit();
     for(int i = 0; i < maximum; ++i){
-        machine = machineRead(fp); 
+        machine = machineRead(fp, machine); 
         machinePrint(machine);
     }
+    machineDestroy(machine);
     fclose(fp);
     getchar();
     getchar();
@@ -51,11 +52,11 @@ void addMachines(){
         clear();
         return;
     }
-    Machine *machine;
-    char *new_name;
-    char *new_out_name;
-    char *new_in1_name;
-    char *new_in2_name;
+    Machine *machine = machineInit();
+    char new_name[40];
+    char new_out_name[40];
+    char new_in1_name[40];
+    char new_in2_name[40];
     int new_out_amount;
     int new_in1_amount;
     int new_in2_amount;
@@ -75,7 +76,7 @@ void addMachines(){
         scanf(" %39[^\n]", new_in2_name);
         printf("Material in2 amount: ");
         scanf(" %d", &new_in2_amount);
-        machine = machineCreate(new_name, new_out_name, new_out_amount, new_in1_name, new_in1_amount, new_in2_name, new_in2_amount);
+        machine = machineFill(machine, new_name, new_out_name, new_out_amount, new_in1_name, new_in1_amount, new_in2_name, new_in2_amount);
         clear();
         machinePrint(machine);
         printf("Proceed(y/n)?\n");
@@ -84,6 +85,7 @@ void addMachines(){
     }
 
     machineWrite(fp, machine);
+    machineDestroy(machine);
     fclose(fp); 
 
     fp = fopen("machines.dat", "rb+");
@@ -104,8 +106,7 @@ void makeCalculation(){
     // TODO : make function to calculate necessary materials based on end result
 };
 
-int main(int arc, char** argv)
-{
+int main(){//int arc, char** argv){
     clear();
     makeMachinefile();
     readMachines();

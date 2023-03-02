@@ -19,16 +19,25 @@ void clear(){
     printf("\e[1;1H\e[2J");
 }
 
-Machine *machineCreate(char *name, char *mat_out, int mat_out_amount, char *mat_in1, int mat_in1_amount, char *mat_in2, int mat_in2_amount){
-    Machine *machine;
+Machine *machineInit(){
+    Machine *machine = (Machine *) malloc(sizeof(*machine));
+    return machine;
+}
+
+Machine *machineFill(Machine *machine, char *name, char *mat_out, int mat_out_amount, char *mat_in1, int mat_in1_amount, char *mat_in2, int mat_in2_amount){
     strncpy(machine->name, name, sizeof(machine->name));
     strncpy(machine->out.name, mat_out, sizeof(machine->out.name));
-    strncpy(machine->in1.name, mat_out, sizeof(machine->in1.name));
-    strncpy(machine->in2.name, mat_out, sizeof(machine->in2.name));
+    strncpy(machine->in1.name, mat_in1, sizeof(machine->in1.name));
+    strncpy(machine->in2.name, mat_in2, sizeof(machine->in2.name));
     machine->out.amount = mat_out_amount;
     machine->in1.amount = mat_in1_amount;
     machine->in2.amount = mat_in2_amount;
     return machine;
+}
+
+void machineDestroy(Machine *machine){
+    free(machine);
+    return;
 }
 
 Machine *machineArrayCreate(int size){
@@ -42,9 +51,8 @@ void machinePrint(Machine *machine){
                 machine->in1.amount, machine->in2.name, machine->in2.amount);
 }
 
-Machine *machineRead(FILE *fp){
-        Machine *machine;
-        fread(&machine, sizeof(Machine), 1, fp); 
+Machine *machineRead(FILE *fp, Machine *machine){
+        fread(machine, sizeof(Machine), 1, fp); 
         return machine;
 }
 
