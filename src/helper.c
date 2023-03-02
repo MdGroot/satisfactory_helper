@@ -19,7 +19,6 @@ void makeMachinefile(){
 };
 
 void readMachines(){
-    clear();
     FILE *fp = fopen("machines.dat", "rb");
     if(!fp)
     {
@@ -81,7 +80,6 @@ void addMachines(){
         machinePrint(machine);
         printf("Proceed(y/n)?\n");
         scanf(" %c", &proceed);
-        clear();
     }
 
     machineWrite(fp, machine);
@@ -109,7 +107,6 @@ void makeCalculation(){
 int main(){//int arc, char** argv){
     clear();
     makeMachinefile();
-    readMachines();
     
     int choice;
     while(1){
@@ -122,7 +119,7 @@ int main(){//int arc, char** argv){
         printf("Enter your choice: ");
     
         scanf("%1d", &choice);
-    
+        clear();    
         switch (choice)
         {
             case 1:
