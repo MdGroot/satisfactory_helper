@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "funct.h"
 
 void makeMachinefile(){
@@ -127,10 +128,45 @@ void removeMachines(){
     fclose(fpi); 
     machineDestroy(machine);
     fclose(fpw);
+    return;
 };
 
 void makeCalculation(){
     // TODO : make function to calculate necessary materials based on end result
+    char end_mat[40];
+    int end_amount;
+    char cur_mat[40];
+    int cur_amount;
+    printf("Material to be made: ");
+    scanf(" %39[^\n]", end_mat);
+    strncpy(cur_mat, end_mat, sizeof(cur_mat));
+    printf("Amount to be made (0 for standard): ");
+    scanf(" %d", &end_amount);
+    cur_amount = end_amount;
+
+    FILE *fp = fopen("machines.dat", "rb");
+    if(fpCheck(fp) == 0){
+        return;
+    }
+    int maximum = 0;
+    fread(&maximum, sizeof(int), 1, fp);
+    Machine *machine = machineInit();
+    int found = 1;
+    while(found == 1){
+        rewind(fp);
+        fp = fpSetbackInt(fp);
+        int equal = 1;
+        found = 0;
+        for(int i = 0; i < maximum; ++i){
+            machine = machineRead(fp, machine); 
+            equal = outputCompare(machine, cur_mat);
+            if(equal == 0){
+                ++found;
+
+            }
+        }
+    }
+    fclose(fp);
 };
 
 int main(){//int arc, char** argv){
@@ -158,9 +194,17 @@ int main(){//int arc, char** argv){
                 break;
             case 2:
                 addMachines();
+                clear();
+                readMachines();
+                getchar();
+                getchar();
                 break;
             case 3:
                 removeMachines();
+                clear();
+                readMachines();
+                getchar();
+                getchar();
                 break;
             case 4:
                 makeCalculation();

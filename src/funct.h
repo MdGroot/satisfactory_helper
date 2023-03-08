@@ -28,10 +28,14 @@ int fpCheck(FILE *fp);
 
 FILE *fpSetback(FILE *fp);
 
+FILE *fpSetbackInt(FILE *fp);
+
 FILE *fpSetforward(FILE *fp);
 
 FILE *fpMove(FILE *fp, FILE *fpw);
 
 void fpMoveToEnd(FILE *fp, int amount);
+
+int outputCompare(Machine *machine, char *out_name);
 
 #endif

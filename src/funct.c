@@ -62,7 +62,11 @@ void machineWrite(FILE *fp, Machine *machine){
 
 int machineCompare(Machine *machine, char *name){
     int equal = strcmp(machine->name, name);
-    equal ? printf("hit\n") : printf("no hit\n");
+    return equal;
+}
+
+int outputCompare(Machine *machine, char *out_name){
+    int equal = strcmp(machine->out.name, out_name);
     return equal;
 }
 
@@ -80,6 +84,15 @@ int fpCheck(FILE *fp){
 FILE *fpSetback(FILE *fp){
     int i;
     i = fseek(fp, (long)-sizeof(Machine), SEEK_CUR);
+    if(i!=0){
+        printf("ERROR IN SETBACK\n");
+    }
+    return fp;
+}
+
+FILE *fpSetbackInt(FILE *fp){
+    int i;
+    i = fseek(fp, (long)-sizeof(int), SEEK_CUR);
     if(i!=0){
         printf("ERROR IN SETBACK\n");
     }
