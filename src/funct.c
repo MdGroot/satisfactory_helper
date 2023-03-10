@@ -5,7 +5,7 @@
 
 typedef struct MyMaterial{
     char name [40];
-    int amount;
+    double amount;
 }Material;
 
 typedef struct MyMachine{
@@ -14,6 +14,12 @@ typedef struct MyMachine{
     Material in1;
     Material in2;
 }Machine;
+
+typedef struct MyMachineList{
+    char name [40];
+    double amount;
+    struct MyMachineList *next;
+}MachineList;
 
 void clear(){
     printf("\e[1;1H\e[2J");
@@ -24,7 +30,7 @@ Machine *machineInit(){
     return machine;
 }
 
-Machine *machineFill(Machine *machine, char *name, char *mat_out, int mat_out_amount, char *mat_in1, int mat_in1_amount, char *mat_in2, int mat_in2_amount){
+Machine *machineFill(Machine *machine, char *name, char *mat_out, double mat_out_amount, char *mat_in1, double mat_in1_amount, char *mat_in2, double mat_in2_amount){
     strncpy(machine->name, name, sizeof(machine->name));
     strncpy(machine->out.name, mat_out, sizeof(machine->out.name));
     strncpy(machine->in1.name, mat_in1, sizeof(machine->in1.name));
@@ -40,20 +46,85 @@ void machineDestroy(Machine *machine){
     return;
 }
 
+void listUpdate(MachineList **head, char *name, double amount){
+    int equal; 
+    MachineList *tmp = *head;
+    if(tmp == NULL){
+        MachineList *new_entry = (MachineList *) malloc(sizeof(*new_entry));
+        strncpy(new_entry->name, name, sizeof(new_entry->name));
+        new_entry->amount = amount;
+        new_entry->next = NULL;
+        *head = new_entry;
+        return;
+    }
+    equal = strcmp(tmp->name, name);
+    while(equal != 0 && tmp->next != NULL){
+        tmp = tmp->next;
+        equal = strcmp(tmp->name, name);
+    }
+    if(equal == 0){
+        tmp->amount += amount;
+    }
+    else if(tmp->next == NULL){
+        MachineList *new_entry = (MachineList *) malloc(sizeof(*new_entry));
+        strncpy(new_entry->name, name, sizeof(new_entry->name));
+        new_entry->amount = amount;
+        new_entry->next = NULL;
+        tmp->next = new_entry;
+    }
+    return;
+}
+
+void machineListCreate(MachineList **head, char *cur_mat, double cur_amount){
+    FILE *fp = fopen("machines.dat", "rb");
+    if(fpCheck(fp) == 0){
+        return;
+    }
+    int maximum = 0;
+    fread(&maximum, sizeof(int), 1, fp);
+    Machine *machine = machineInit();
+    double machinecount = 0;
+    int equal = 1;
+
+    rewind(fp);
+    fp = fpSetforwardInt(fp);
+    for(int i = 0; i < maximum; ++i){
+        machine = machineRead(fp, machine); 
+        equal = outputCompare(machine, cur_mat);
+        if(equal == 0){
+            if(cur_amount == 0){machinecount = 1;}
+            else{
+                machinecount = cur_amount/machine->out.amount;
+                listUpdate(head, machine->name, machinecount);
+            }
+
+            //update list
+            //update curr amount and material 1 and run again
+            //update curr amount and material 2 and run again
+        }
+    }
+
+    fclose(fp);
+    machineDestroy(machine);
+    return;
+}
+
+
+
 Machine *machineArrayCreate(int size){
     Machine *machine_array = (Machine *) malloc(size * sizeof(* machine_array));
     return machine_array;
 }
 
 void machinePrint(Machine *machine){
-        printf("Machine name:      %s\nMaterial output:   %s, %d\nMaterial 1 intput: %s, %d\nMaterial 2 intput: %s, %d\n\n", 
-                machine->name, machine->out.name, machine->out.amount, machine->in1.name, 
-                machine->in1.amount, machine->in2.name, machine->in2.amount);
+    printf("Machine name:      %s\nMaterial output:   %s, %lf\nMaterial 1 intput: %s, %lf\nMaterial 2 intput: %s, %lf\n\n", 
+            machine->name, machine->out.name, machine->out.amount, machine->in1.name, 
+            machine->in1.amount, machine->in2.name, machine->in2.amount);
 }
 
 Machine *machineRead(FILE *fp, Machine *machine){
-        fread(machine, sizeof(Machine), 1, fp); 
-        return machine;
+    fread(machine, sizeof(Machine), 1, fp); 
+    return machine;
 }
 
 void machineWrite(FILE *fp, Machine *machine){
@@ -90,9 +161,9 @@ FILE *fpSetback(FILE *fp){
     return fp;
 }
 
-FILE *fpSetbackInt(FILE *fp){
+FILE *fpSetforwardInt(FILE *fp){
     int i;
-    i = fseek(fp, (long)-sizeof(int), SEEK_CUR);
+    i = fseek(fp, (long)sizeof(int), SEEK_CUR);
     if(i!=0){
         printf("ERROR IN SETBACK\n");
     }

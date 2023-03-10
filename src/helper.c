@@ -50,9 +50,9 @@ void addMachines(){
     char new_out_name[40];
     char new_in1_name[40];
     char new_in2_name[40];
-    int new_out_amount;
-    int new_in1_amount;
-    int new_in2_amount;
+    double new_out_amount;
+    double new_in1_amount;
+    double new_in2_amount;
     while(proceed == ('n')) {
         clear();
         printf("New machine name: ");
@@ -60,15 +60,15 @@ void addMachines(){
         printf("Material out name: ");
         scanf(" %39[^\n]", new_out_name);
         printf("Material out amount: ");
-        scanf(" %d", &new_out_amount);
+        scanf(" %lf", &new_out_amount);
         printf("Material in1 name: ");
         scanf(" %39[^\n]", new_in1_name);
         printf("Material in1 amount: ");
-        scanf(" %d", &new_in1_amount);
+        scanf(" %lf", &new_in1_amount);
         printf("Material in2 name: ");
         scanf(" %39[^\n]", new_in2_name);
         printf("Material in2 amount: ");
-        scanf(" %d", &new_in2_amount);
+        scanf(" %lf", &new_in2_amount);
         machine = machineFill(machine, new_name, new_out_name, new_out_amount, new_in1_name, new_in1_amount, new_in2_name, new_in2_amount);
         clear();
         machinePrint(machine);
@@ -134,39 +134,13 @@ void removeMachines(){
 void makeCalculation(){
     // TODO : make function to calculate necessary materials based on end result
     char end_mat[40];
-    int end_amount;
-    char cur_mat[40];
-    int cur_amount;
+    double end_amount;
     printf("Material to be made: ");
     scanf(" %39[^\n]", end_mat);
-    strncpy(cur_mat, end_mat, sizeof(cur_mat));
     printf("Amount to be made (0 for standard): ");
-    scanf(" %d", &end_amount);
-    cur_amount = end_amount;
-
-    FILE *fp = fopen("machines.dat", "rb");
-    if(fpCheck(fp) == 0){
-        return;
-    }
-    int maximum = 0;
-    fread(&maximum, sizeof(int), 1, fp);
-    Machine *machine = machineInit();
-    int found = 1;
-    while(found == 1){
-        rewind(fp);
-        fp = fpSetbackInt(fp);
-        int equal = 1;
-        found = 0;
-        for(int i = 0; i < maximum; ++i){
-            machine = machineRead(fp, machine); 
-            equal = outputCompare(machine, cur_mat);
-            if(equal == 0){
-                ++found;
-
-            }
-        }
-    }
-    fclose(fp);
+    scanf(" %lf", &end_amount);
+    MachineList *head = NULL; 
+    machineListCreate(&head, end_mat, end_amount);
 };
 
 int main(){//int arc, char** argv){
