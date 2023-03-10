@@ -139,8 +139,14 @@ void makeCalculation(){
     scanf(" %39[^\n]", end_mat);
     printf("Amount to be made (0 for standard): ");
     scanf(" %lf", &end_amount);
+    clear();
     MachineList *head = NULL; 
     machineListCreate(&head, end_mat, end_amount);
+    listPrint(head);
+    getchar();
+    getchar();
+    listDestroy(head);
+    return;
 };
 
 int main(){//int arc, char** argv){

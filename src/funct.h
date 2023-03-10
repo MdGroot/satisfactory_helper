@@ -22,6 +22,10 @@ void listUpdate(MachineList **head, char *name, double amount);
 
 void machineListCreate(MachineList **head, char *cur_mat, double cur_amount);
 
+void listPrint(MachineList *head);
+
+void listDestroy(MachineList *head);
+
 void machinePrint(Machine *machine);
 
 Machine *machineRead(FILE *fp, Machine *machine);

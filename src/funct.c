@@ -75,6 +75,36 @@ void listUpdate(MachineList **head, char *name, double amount){
     return;
 }
 
+void listPrint(MachineList *head){
+    MachineList *tmp = head;
+    if(tmp != NULL){
+        printf("Machine:  %s\nAmount:   %.2lf\n\n", tmp->name, tmp->amount);
+    }
+    else{
+        printf("list is empty\n");
+        return;
+    }
+    while(tmp->next != NULL){
+        tmp = tmp->next;
+        printf("Machine:  %s\nAmount:   %.2lf\n\n", tmp->name, tmp->amount);
+    }
+    return;
+}
+
+void listDestroy(MachineList *head){
+    if(head == NULL){
+        return;
+    }
+    MachineList *tmp = head;
+    while(tmp->next != NULL){
+        tmp = tmp->next;
+        free(head);
+        head = tmp;
+    }
+    free(tmp);
+    return;
+}
+
 void machineListCreate(MachineList **head, char *cur_mat, double cur_amount){
     FILE *fp = fopen("machines.dat", "rb");
     if(fpCheck(fp) == 0){
@@ -85,6 +115,7 @@ void machineListCreate(MachineList **head, char *cur_mat, double cur_amount){
     Machine *machine = machineInit();
     double machinecount = 0;
     int equal = 1;
+    int amount = 0;
 
     rewind(fp);
     fp = fpSetforwardInt(fp);
@@ -93,14 +124,16 @@ void machineListCreate(MachineList **head, char *cur_mat, double cur_amount){
         equal = outputCompare(machine, cur_mat);
         if(equal == 0){
             if(cur_amount == 0){machinecount = 1;}
-            else{
-                machinecount = cur_amount/machine->out.amount;
-                listUpdate(head, machine->name, machinecount);
+            else{machinecount = cur_amount/machine->out.amount;}
+            listUpdate(head, machine->name, machinecount);
+            if(machine->in1.amount != 0){
+                amount = machinecount * machine->in1.amount;
+                machineListCreate(head, machine->in1.name, amount);
             }
-
-            //update list
-            //update curr amount and material 1 and run again
-            //update curr amount and material 2 and run again
+            if(machine->in2.amount != 0){
+                amount = machinecount * machine->in2.amount;
+                machineListCreate(head, machine->in2.name, amount);
+            }
         }
     }
 
@@ -117,7 +150,7 @@ Machine *machineArrayCreate(int size){
 }
 
 void machinePrint(Machine *machine){
-    printf("Machine name:      %s\nMaterial output:   %s, %lf\nMaterial 1 intput: %s, %lf\nMaterial 2 intput: %s, %lf\n\n", 
+    printf("Machine name:      %s\nMaterial output:   %s, %.2lf\nMaterial 1 intput: %s, %.2lf\nMaterial 2 intput: %s, %.2lf\n\n", 
             machine->name, machine->out.name, machine->out.amount, machine->in1.name, 
             machine->in1.amount, machine->in2.name, machine->in2.amount);
 }
